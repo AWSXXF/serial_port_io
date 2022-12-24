@@ -1,7 +1,7 @@
 [package]
 name = "serial_io"
 version = "0.1.0"
-author = "ydd_180"
+authors = ["ydd_180"]
 description = "a serial tool in windows"
 edition = '2021'
 
