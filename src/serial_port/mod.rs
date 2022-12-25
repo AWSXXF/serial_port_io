@@ -1,8 +1,8 @@
 use crate::win_com::*;
-use std::{
-    io::{Result, Write},
-    ops::BitOr,
-};
+
+pub use crate::win_com::Access;
+
+use std::io::{Result, Write};
 pub struct SerialPort {
     pub name: String,
     com: HANDLE,
@@ -13,21 +13,16 @@ pub struct SerialPort {
 }
 
 impl SerialPort {
-    pub fn try_new(name: &str) -> Result<Self> {
+    pub fn try_new(name: &str, access: Access) -> Result<Self> {
         Ok(Self {
             name: String::from(name),
-            com: create_comm(
-                name,
-                FILE_ACCESS_FLAGS(0)
-                    .bitor(FILE_GENERIC_READ)
-                    .bitor(FILE_GENERIC_WRITE),
-            )?,
+            com: create_comm(name, access)?,
             timeouts: COMMTIMEOUTS {
-                ReadIntervalTimeout: u32::MAX,
-                ReadTotalTimeoutMultiplier: 0,
-                ReadTotalTimeoutConstant: 0,
-                WriteTotalTimeoutMultiplier: 0,
-                WriteTotalTimeoutConstant: 0,
+                ReadIntervalTimeout: 1,
+                ReadTotalTimeoutMultiplier: 1,
+                ReadTotalTimeoutConstant: 1,
+                WriteTotalTimeoutMultiplier: 1,
+                WriteTotalTimeoutConstant: 1,
             },
             rate: 115200,
             dw_in_queue: 1024,
@@ -63,11 +58,7 @@ impl SerialPort {
 
 impl std::io::Read for SerialPort {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        let mut size = 0;
-        while size == 0 {
-            size = read_comm(self.com, buf)?;
-        }
-        Ok(size)
+        read_comm(self.com, buf)
     }
 }
 

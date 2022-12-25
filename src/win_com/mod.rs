@@ -18,8 +18,17 @@ use windows::Win32::{
         PurgeComm, SetCommState, SetCommTimeouts, SetupComm, NOPARITY, ONESTOPBIT, PURGE_RXCLEAR,
         PURGE_TXCLEAR,
     },
-    Storage::FileSystem::{CreateFile2, ReadFile, WriteFile, FILE_SHARE_NONE, OPEN_EXISTING},
+    Storage::FileSystem::{
+        CreateFile2, ReadFile, WriteFile, FILE_SHARE_NONE, FILE_SHARE_READ, FILE_SHARE_WRITE,
+        OPEN_EXISTING,
+    },
 };
+
+pub enum Access {
+    Read,
+    Write,
+    All,
+}
 
 pub fn purge_comm(com: HANDLE) -> Result<()> {
     unsafe {
@@ -63,7 +72,7 @@ pub fn setup_comm(com: HANDLE, in_queue_size: u32, out_queue_size: u32) -> Resul
     Ok(())
 }
 
-pub fn create_comm(com_name: &str, file_flag: FILE_ACCESS_FLAGS) -> Result<HANDLE> {
+pub fn create_comm(com_name: &str, file_access: Access) -> Result<HANDLE> {
     let com_name: Vec<u16> = String::from(com_name)
         .encode_utf16()
         .chain(iter::once(0))
@@ -72,8 +81,18 @@ pub fn create_comm(com_name: &str, file_flag: FILE_ACCESS_FLAGS) -> Result<HANDL
     let com = unsafe {
         CreateFile2(
             PCWSTR(com_name.as_ptr()),
-            file_flag,
-            FILE_SHARE_NONE,
+            match file_access {
+                Access::All => FILE_ACCESS_FLAGS(0)
+                    .bitor(FILE_GENERIC_READ)
+                    .bitor(FILE_GENERIC_WRITE),
+                Access::Read => FILE_GENERIC_READ,
+                Access::Write => FILE_GENERIC_WRITE,
+            },
+            match file_access {
+                Access::All => FILE_SHARE_NONE,
+                Access::Read => FILE_SHARE_READ,
+                Access::Write => FILE_SHARE_WRITE,
+            },
             OPEN_EXISTING,
             None,
         )?

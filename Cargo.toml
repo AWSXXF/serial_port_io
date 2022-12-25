@@ -4,10 +4,11 @@ version = "0.1.0"
 authors = ["ydd_180"]
 description = "a serial tool in windows"
 edition = '2021'
-
+build = "src/bindings/build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+ctrlc = "3.2.4"
 
 [dependencies.windows]
 version = "0.43.0"
@@ -18,3 +19,7 @@ features = [
     "Win32_Devices_Communication",
     "Win32_System_IO",
 ]
+
+
+[build-dependencies]
+bindgen = "0.63.0"
