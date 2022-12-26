@@ -14,7 +14,7 @@ fn main() -> Result<()> {
 
     let stop = Arc::new(Mutex::new(false));
 
-    let mut sp = SerialPort::try_new(com.as_str(), Access::All).unwrap();
+    let mut sp = SerialPort::try_new(format!("\\\\.\\{}", com).as_str(), Access::All).unwrap();
     sp.init().unwrap();
 
     let sp = Arc::new(Mutex::new(sp));
