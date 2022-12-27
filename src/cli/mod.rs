@@ -3,12 +3,12 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[command(
     author = "ydd_180",
-    version = "0.1.1",
+    version = "0.1.3",
     about = "a windows serial port tools",
     long_about = "ctrl+B or ctrl+B to exit the connection"
 )]
 pub struct Cli {
-    /// enable utf-8 encoding mode, default: GB2312
+    /// enable GB2312 encoding mode, default: UTF-8
     #[arg(long)]
     pub gb2312: bool,
 
