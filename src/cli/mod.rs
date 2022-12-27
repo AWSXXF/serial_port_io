@@ -3,16 +3,18 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[command(
     author = "ydd_180",
-    version = "0.1.1",
+    version = "0.1.3",
     about = "a windows serial port tools",
     long_about = "ctrl+B or ctrl+B to exit the connection"
 )]
 pub struct Cli {
-    /// enable utf-8 encoding mode, default: GB2312
+    /// enable GB2312 encoding mode, default: UTF-8
     #[arg(long)]
-    pub utf8: bool,
+    pub gb2312: bool,
 
-    /// serial name like `com10`
-    #[arg(required = true)]
-    pub com_name: String,
+    // #[arg(short, long, value_name = "list", action)]
+    // pub list_port: bool,
+    /// serial port name like `com10`
+    #[arg(required = false, value_name = "serial port")]
+    pub port_name: String,
 }
