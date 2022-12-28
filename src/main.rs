@@ -1,11 +1,11 @@
-use clap::Parser;
+use clap::{CommandFactory, Parser};
 use serial_io::{bindings::c_getch, cli};
 use std::io::ErrorKind::TimedOut;
 use std::io::{Read, Result, Write};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use textcode::gb2312;
+use textcode::{gb2312, utf8};
 
 fn main() -> Result<()> {
     // if cfg!(target_os = "windows") {
@@ -19,17 +19,26 @@ fn main() -> Result<()> {
     // 命令行参数
     ctrlc::set_handler(|| {}).expect("无法忽略SIGINT信号");
     let args = cli::Cli::parse();
+
+    let list = args.list_port;
     let port_name = args.port_name;
     let use_gb2312 = args.gb2312;
-    // let list_port = args.list_port;
 
-    // if list_port == true {
-    //     let ports = serialport::available_ports().expect("No ports found!");
-    //     for p in ports {
-    //         println!("{}({:?})", p.port_name, p.port_type);
-    //     }
-    //     return Ok(());
-    // }
+    if list == true {
+        let available_ports = serialport::available_ports().expect("读取可用串口失败");
+        for port in available_ports.iter() {
+            println!("{}\t{:?}", port.port_name, port.port_type);
+        }
+        return Ok(());
+    }
+
+    let port_name = match port_name {
+        Some(name) => name,
+        None => {
+            cli::Cli::command().print_help().unwrap();
+            return Ok(());
+        }
+    };
 
     // 初始化
     let display = if use_gb2312 == true {
@@ -39,7 +48,7 @@ fn main() -> Result<()> {
         }
     } else {
         |buf: &[u8]| {
-            print!("{}", String::from_utf8(buf.to_vec()).unwrap());
+            print!("{}", utf8::decode_to_string(buf));
             std::io::stdout().flush().unwrap();
         }
     };

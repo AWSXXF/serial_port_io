@@ -1,6 +1,6 @@
 [package]
 name = "serial_io"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["ydd_180"]
 description = "a serial tool in windows"
 edition = '2021'
@@ -10,7 +10,7 @@ build = "src/bindings/build.rs"
 [dependencies]
 ctrlc = "3.2.4"
 textcode = "0.2.2"
-clap = { version = "4.0.32", features = ["derive"] }
+clap = { version = "4.0.32", features = ["derive", "error-context"] }
 serialport = "4.2.0"
 
 [dependencies.windows]
