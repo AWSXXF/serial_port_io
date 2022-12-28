@@ -3,7 +3,7 @@ use std::env;
 use std::io::Result;
 use std::path::Path;
 
-fn main() -> Result<()> {
+fn build_bindings() -> Result<()> {
     let out_dir = env::var("OUT_DIR").unwrap();
     let cargo_root_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
 
@@ -15,6 +15,7 @@ fn main() -> Result<()> {
         )
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .allowlist_function("_getch")
+        .allowlist_function("_getwch")
         .generate()
         .expect("无法生成binding");
 

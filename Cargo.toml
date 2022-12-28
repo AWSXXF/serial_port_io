@@ -1,10 +1,10 @@
 [package]
 name = "serial_io"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["ydd_180"]
-description = "a serial tool in windows"
+description = "A serial tool for windows"
 edition = '2021'
-build = "src/bindings/build.rs"
+build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

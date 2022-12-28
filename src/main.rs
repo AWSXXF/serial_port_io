@@ -21,6 +21,7 @@ fn main() -> Result<()> {
     let args = cli::Cli::parse();
 
     let list = args.list_port;
+    let rate = args.baud_rate;
     let port_name = args.port_name;
     let use_gb2312 = args.gb2312;
 
@@ -54,19 +55,28 @@ fn main() -> Result<()> {
     };
     let stop = Arc::new(Mutex::new(false));
 
-    let port = serialport::new(port_name, 115_200)
+    let port = serialport::new(&port_name, rate)
         .timeout(Duration::from_millis(100))
         .open()
         .expect("Failed to open port");
 
     let port = Arc::new(Mutex::new(port));
 
+    // 提示信息
+    println!(
+        "PORT open: name({}) bound rate({}) encode({})",
+        port_name,
+        rate,
+        if use_gb2312 { "GB2312" } else { "UTF-8" }
+    );
+    println!("ctrl+B or ctrl+B to exit the connection");
+
     // 接受线程
     let recive_thread = {
         let stop = stop.clone();
         let port = port.clone();
         thread::spawn(move || {
-            let mut serial_buf: Vec<u8> = vec![0; 32];
+            let mut serial_buf: Vec<u8> = vec![0; 1024];
             let mut size = 0;
             let _ = size; // just make compiler happy
 
@@ -88,7 +98,7 @@ fn main() -> Result<()> {
                 if size != 0 {
                     display(&serial_buf[0..size]);
                 } else {
-                    thread::sleep(Duration::from_micros(10));
+                    thread::sleep(Duration::from_micros(1));
                 }
             }
         })
