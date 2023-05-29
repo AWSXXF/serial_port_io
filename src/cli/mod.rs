@@ -5,7 +5,7 @@ use clap::Parser;
     author = env!("CARGO_PKG_AUTHORS"),
     version = env!("CARGO_PKG_VERSION"),
     about = env!("CARGO_PKG_DESCRIPTION"),
-    long_about = "ctrl+B or ctrl+B to exit the connection",
+    long_about = "ctrl+A or ctrl+B to exit the connection",
 )]
 
 pub struct Cli {

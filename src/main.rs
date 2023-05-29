@@ -69,7 +69,7 @@ fn main() -> Result<()> {
         rate,
         if use_gb2312 { "GB2312" } else { "UTF-8" }
     );
-    println!("ctrl+B or ctrl+B to exit the connection");
+    println!("ctrl+A or ctrl+B to exit the connection");
 
     // 接受线程
     let recive_thread = {
